@@ -1,9 +1,0 @@
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/gameApplication.dir
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/edit_cache.dir
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/rebuild_cache.dir
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/list_install_components.dir
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/install.dir
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/install/local.dir
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/install/strip.dir
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/gameApplication_autogen_timestamp_deps.dir
-/home/yareg/gameApplication/build/CrossPlatform-Release/CMakeFiles/gameApplication_autogen.dir

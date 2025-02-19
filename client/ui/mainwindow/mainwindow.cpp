@@ -49,15 +49,15 @@ void MainWindow::onMessageReceived(QString message) {
         gameWindow->show();
     }
     else if (type == "game_start") {
+        qDebug() << "Перешел в созданную комнату:" << obj["room"].toString();
         qDebug() << "Игра началась!";
-        GameWindow* gameWindow = new GameWindow(socket, selectedRoom);
-        gameWindow->show();
+        GameWindow* gameWindow2 = new GameWindow(socket, selectedRoom);
+        gameWindow2->show();
     }
     else if (type == "new_room") {
         QString roomName = obj["room"].toString();
         roomList->addItem(roomName);  // Добавляем комнату в список
     }
-
     else if (type == "error") {
         qDebug() << "Ошибка:" << obj["message"].toString();
     }

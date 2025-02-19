@@ -40,7 +40,8 @@ void GameServer::processMessage(QString message) {
         QString roomName = obj["room"].toString();
         if (rooms.contains(roomName) && rooms[roomName].second == nullptr) {
             rooms[roomName].second = socket;
-            sendToRoom(roomName, {{"type", "game_start"}});
+            //sendToRoom(roomName, {{"type", "game_start"}});
+            sendToClient(socket, {{"type", "game_start"}});
         } else {
             sendToClient(socket, {{"type", "error"}, {"message", "Комната недоступна"}});
         }

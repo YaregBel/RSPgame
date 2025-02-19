@@ -1,8 +1,0 @@
-/home/yareg/gameApplication/build/CrossPlatform-Debug/CMakeFiles/client_app.dir
-/home/yareg/gameApplication/build/CrossPlatform-Debug/CMakeFiles/server_app.dir
-/home/yareg/gameApplication/build/CrossPlatform-Debug/CMakeFiles/edit_cache.dir
-/home/yareg/gameApplication/build/CrossPlatform-Debug/CMakeFiles/rebuild_cache.dir
-/home/yareg/gameApplication/build/CrossPlatform-Debug/CMakeFiles/client_app_autogen_timestamp_deps.dir
-/home/yareg/gameApplication/build/CrossPlatform-Debug/CMakeFiles/client_app_autogen.dir
-/home/yareg/gameApplication/build/CrossPlatform-Debug/CMakeFiles/server_app_autogen_timestamp_deps.dir
-/home/yareg/gameApplication/build/CrossPlatform-Debug/CMakeFiles/server_app_autogen.dir
