@@ -40,20 +40,7 @@ static constexpr auto qt_meta_stringdata_ZN10GameServerE = QtMocHelpers::stringD
     "GameServer",
     "onNewConnection",
     "",
-    "onClientDisconnected",
-    "broadcastMessage",
-    "message",
-    "processMessage",
-    "handleGameMove",
-    "QWebSocket*",
-    "socket",
-    "obj",
-    "sendToClient",
-    "sendToRoom",
-    "roomName",
-    "determineWinner",
-    "p1",
-    "p2"
+    "onClientDisconnected"
 );
 #else  // !QT_MOC_HAS_STRINGDATA
 #error "qtmochelpers.h not found or too old."
@@ -65,7 +52,7 @@ Q_CONSTINIT static const uint qt_meta_data_ZN10GameServerE[] = {
       12,       // revision
        0,       // classname
        0,    0, // classinfo
-       8,   14, // methods
+       2,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -73,24 +60,12 @@ Q_CONSTINIT static const uint qt_meta_data_ZN10GameServerE[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   62,    2, 0x08,    1 /* Private */,
-       3,    0,   63,    2, 0x08,    2 /* Private */,
-       4,    1,   64,    2, 0x08,    3 /* Private */,
-       6,    1,   67,    2, 0x08,    5 /* Private */,
-       7,    2,   70,    2, 0x08,    7 /* Private */,
-      11,    2,   75,    2, 0x08,   10 /* Private */,
-      12,    2,   80,    2, 0x08,   13 /* Private */,
-      14,    2,   85,    2, 0x08,   16 /* Private */,
+       1,    0,   26,    2, 0x08,    1 /* Private */,
+       3,    0,   27,    2, 0x08,    2 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QJsonObject,    5,
-    QMetaType::Void, QMetaType::QString,    5,
-    QMetaType::Void, 0x80000000 | 8, QMetaType::QJsonObject,    9,   10,
-    QMetaType::Void, 0x80000000 | 8, QMetaType::QJsonObject,    9,    5,
-    QMetaType::Void, QMetaType::QString, QMetaType::QJsonObject,   13,    5,
-    QMetaType::QString, QMetaType::QString, QMetaType::QString,   15,   16,
 
        0        // eod
 };
@@ -107,29 +82,7 @@ Q_CONSTINIT const QMetaObject GameServer::staticMetaObject = { {
         // method 'onNewConnection'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'onClientDisconnected'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        // method 'broadcastMessage'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QJsonObject &, std::false_type>,
-        // method 'processMessage'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QString, std::false_type>,
-        // method 'handleGameMove'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QWebSocket *, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QJsonObject, std::false_type>,
-        // method 'sendToClient'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QWebSocket *, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QJsonObject, std::false_type>,
-        // method 'sendToRoom'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<QJsonObject, std::false_type>,
-        // method 'determineWinner'
-        QtPrivate::TypeAndForceComplete<QString, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>,
-        QtPrivate::TypeAndForceComplete<const QString &, std::false_type>
+        QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
 } };
@@ -141,35 +94,10 @@ void GameServer::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         switch (_id) {
         case 0: _t->onNewConnection(); break;
         case 1: _t->onClientDisconnected(); break;
-        case 2: _t->broadcastMessage((*reinterpret_cast< std::add_pointer_t<QJsonObject>>(_a[1]))); break;
-        case 3: _t->processMessage((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1]))); break;
-        case 4: _t->handleGameMove((*reinterpret_cast< std::add_pointer_t<QWebSocket*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QJsonObject>>(_a[2]))); break;
-        case 5: _t->sendToClient((*reinterpret_cast< std::add_pointer_t<QWebSocket*>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QJsonObject>>(_a[2]))); break;
-        case 6: _t->sendToRoom((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QJsonObject>>(_a[2]))); break;
-        case 7: { QString _r = _t->determineWinner((*reinterpret_cast< std::add_pointer_t<QString>>(_a[1])),(*reinterpret_cast< std::add_pointer_t<QString>>(_a[2])));
-            if (_a[0]) *reinterpret_cast< QString*>(_a[0]) = std::move(_r); }  break;
         default: ;
         }
     }
-    if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        switch (_id) {
-        default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-        case 4:
-            switch (*reinterpret_cast<int*>(_a[1])) {
-            default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-            case 0:
-                *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< QWebSocket* >(); break;
-            }
-            break;
-        case 5:
-            switch (*reinterpret_cast<int*>(_a[1])) {
-            default: *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType(); break;
-            case 0:
-                *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType::fromType< QWebSocket* >(); break;
-            }
-            break;
-        }
-    }
+    (void)_a;
 }
 
 const QMetaObject *GameServer::metaObject() const
@@ -191,14 +119,14 @@ int GameServer::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 8)
+        if (_id < 2)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        _id -= 2;
     }
     if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 8)
-            qt_static_metacall(this, _c, _id, _a);
-        _id -= 8;
+        if (_id < 2)
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
+        _id -= 2;
     }
     return _id;
 }

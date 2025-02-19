@@ -1,7 +1,7 @@
 #include "gameServer.h"
 
-GameServer::GameServer(quint16 port, QObject *parent)
-    : QObject(parent), server(new QWebSocketServer("RockPaperServer", QWebSocketServer::NonSecureMode, this)) {
+GameServer::GameServer(quint16 port, QObject *parent) : QObject(parent),
+    server(new QWebSocketServer("RockPaperServer", QWebSocketServer::NonSecureMode, this)) {
 
     if (server->listen(QHostAddress::Any, port)) {
         qDebug() << "Сервер запущен на порту" << port;
@@ -9,13 +9,6 @@ GameServer::GameServer(quint16 port, QObject *parent)
     } else {
         qDebug() << "Ошибка запуска сервера";
     }
-}
-void GameServer::onNewConnection() {
-    auto socket = server->nextPendingConnection();
-    connect(socket, &QWebSocket::textMessageReceived, this, &GameServer::processMessage);
-    connect(socket, &QWebSocket::disconnected, this, &GameServer::onClientDisconnected);
-    clients.insert(socket);
-    qDebug() << "Новый клиент подключился";
 }
 
 void GameServer::broadcastMessage(const QJsonObject &message) {
@@ -36,14 +29,9 @@ void GameServer::processMessage(QString message) {
     if (type == "create_room") {
         QString roomName = obj["room"].toString();
         if (!rooms.contains(roomName)) {
-            rooms[roomName] = {socket, nullptr}; // Первый игрок создаёт комнату
+            rooms[roomName] = {socket, nullptr};
             sendToClient(socket, {{"type", "room_created"}, {"room", roomName}});
-
-            // Отправляем уведомление всем клиентам
-            QJsonObject update;
-            update["type"] = "new_room";
-            update["room"] = roomName;
-            broadcastMessage(update);
+            broadcastMessage({{"type", "new_room"}, {"room", roomName}});
         } else {
             sendToClient(socket, {{"type", "error"}, {"message", "Комната уже существует"}});
         }
@@ -51,7 +39,7 @@ void GameServer::processMessage(QString message) {
     else if (type == "join_room") {
         QString roomName = obj["room"].toString();
         if (rooms.contains(roomName) && rooms[roomName].second == nullptr) {
-            rooms[roomName].second = socket; // Второй игрок присоединяется
+            rooms[roomName].second = socket;
             sendToRoom(roomName, {{"type", "game_start"}});
         } else {
             sendToClient(socket, {{"type", "error"}, {"message", "Комната недоступна"}});
@@ -64,8 +52,9 @@ void GameServer::processMessage(QString message) {
 void GameServer::handleGameMove(QWebSocket *socket, QJsonObject obj) {
     QString choice = obj["choice"].toString();
     QString roomName;
+
     for (auto it = rooms.begin(); it != rooms.end(); ++it) {
-        if (it->first == socket || it->second == socket) {
+        if (it.value().first == socket || it.value().second == socket) {
             roomName = it.key();
             break;
         }
@@ -79,6 +68,7 @@ void GameServer::handleGameMove(QWebSocket *socket, QJsonObject obj) {
     if (!moves[roomName].first.isEmpty() && !moves[roomName].second.isEmpty()) {
         QString winner = determineWinner(moves[roomName].first, moves[roomName].second);
         sendToRoom(roomName, {{"type", "game_result"}, {"winner", winner}});
+        rooms.remove(roomName);
         moves.remove(roomName);
     }
 }
@@ -86,22 +76,13 @@ void GameServer::handleGameMove(QWebSocket *socket, QJsonObject obj) {
 QString GameServer::determineWinner(const QString &p1, const QString &p2) {
     if (p1 == p2) return "draw";
     if ((p1 == "rock" && p2 == "scissors") || (p1 == "scissors" && p2 == "paper") || (p1 == "paper" && p2 == "rock"))
+    {
+        qDebug("Player1 победил!");
         return "player1";
-    return "player2";
-}
-
-void GameServer::onClientDisconnected() {
-    auto socket = qobject_cast<QWebSocket *>(sender());
-    for (auto it = rooms.begin(); it != rooms.end();) {
-        if (it->first == socket || it->second == socket) {
-            sendToRoom(it.key(), {{"type", "opponent_left"}});
-            it = rooms.erase(it);
-        } else {
-            ++it;
-        }
     }
-    clients.remove(socket);
-    socket->deleteLater();
+
+    qDebug("Player2 победил!");
+    return "player2";
 }
 
 void GameServer::sendToClient(QWebSocket *socket, QJsonObject message) {
@@ -112,4 +93,27 @@ void GameServer::sendToRoom(const QString &roomName, QJsonObject message) {
     auto room = rooms[roomName];
     if (room.first) sendToClient(room.first, message);
     if (room.second) sendToClient(room.second, message);
+}
+
+void GameServer::onNewConnection() {
+    auto socket = server->nextPendingConnection();
+    connect(socket, &QWebSocket::textMessageReceived, this, &GameServer::processMessage);
+    connect(socket, &QWebSocket::disconnected, this, &GameServer::onClientDisconnected);
+    clients.insert(socket);
+    qDebug() << "Новый клиент подключился";
+}
+
+void GameServer::onClientDisconnected() {
+    auto socket = qobject_cast<QWebSocket *>(sender());
+    for (auto it = rooms.begin(); it != rooms.end();) {
+        if (it.value().first == socket || it.value().second == socket) {
+            sendToRoom(it.key(), {{"type", "opponent_left"}});
+            moves.remove(it.key());
+            it = rooms.erase(it);
+        } else {
+            ++it;
+        }
+    }
+    clients.remove(socket);
+    socket->deleteLater();
 }

@@ -47,9 +47,9 @@ void GameWindow::onMessageReceived(QString message) {
         if (winner == "draw") {
             statusLabel->setText("Ничья!");
         } else if (winner == "player1") {
-            statusLabel->setText("Вы победили!");
+            statusLabel->setText("Победил player1!");
         } else {
-            statusLabel->setText("Вы проиграли!");
+            statusLabel->setText("Победил player2!");
         }
     } else if (type == "opponent_left") {
         statusLabel->setText("Противник покинул игру.");

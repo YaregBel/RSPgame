@@ -19,13 +19,19 @@ public:
 
 private:
     QTcpSocket *socket;
+    bool m_isInRoom = false;
+
 
 signals:
     void gameResultReceived(const QString &result);
     void sendRoomList(QWebSocket *socket);
+    void connectionLost();
+
 
 private slots:
     void onReadyRead();
+    void onDisconnected();
+
 
 };
 

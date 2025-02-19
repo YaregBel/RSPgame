@@ -44,7 +44,11 @@ void MainWindow::onMessageReceived(QString message) {
 
     if (type == "room_created") {
         qDebug() << "Комната создана:" << obj["room"].toString();
-    } else if (type == "game_start") {
+        selectedRoom = obj["room"].toString();  // Сохраняем название комнаты
+        GameWindow* gameWindow = new GameWindow(socket, selectedRoom);
+        gameWindow->show();
+    }
+    else if (type == "game_start") {
         qDebug() << "Игра началась!";
         GameWindow* gameWindow = new GameWindow(socket, selectedRoom);
         gameWindow->show();
