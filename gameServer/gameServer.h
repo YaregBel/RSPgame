@@ -52,6 +52,12 @@ private:
     /*Метод отвечающий за рассылку сообщения всем участникам комнаты.
     Принимает на вход: roomName - название комнаты, message - сообщение*/
     void sendToRoom(const QString &roomName, QJsonObject message);
+
+    QString getSocketsRoomName(QWebSocket *socket);
+    void restartGame(const QString &roomName);
+    void exitGame(const QString &roomName);
+
+
     /*Метод определяющий победителя. Получает на вход: p1 - выбор первого игрока
      p2 - выбор второго игрока.*/
     QString determineWinner(const QString &p1, const QString &p2);

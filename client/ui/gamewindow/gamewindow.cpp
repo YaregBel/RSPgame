@@ -51,6 +51,13 @@ void GameWindow::onMessageReceived(QString message) {
         } else {
             statusLabel->setText("Победил player2!");
         }
+
+        restartButton = new QPushButton("Переиграть", this);
+        exitButton = new QPushButton("Выйти", this);
+
+        // connect(restartButton, &QPushButton::clicked, this, &GameServer::restartGame);
+        // connect(exitButton, &QPushButton::clicked, this, &GameServer::exitGame);
+
     } else if (type == "opponent_left") {
         statusLabel->setText("Противник покинул игру.");
     }

@@ -54,13 +54,9 @@ void GameServer::handleGameMove(QWebSocket *socket, QJsonObject obj) {
     QString choice = obj["choice"].toString();
     QString roomName;
 
-    for (auto it = rooms.begin(); it != rooms.end(); ++it) {
-        if (it.value().first == socket || it.value().second == socket) {
-            roomName = it.key();
-            break;
-        }
-    }
-    if (roomName.isEmpty()) return;
+    if(!(getSocketsRoomName(socket) != "")) return;
+
+    roomName = getSocketsRoomName(socket);
 
     auto &room = rooms[roomName];
     if (room.first == socket) moves[roomName].first = choice;
@@ -117,4 +113,34 @@ void GameServer::onClientDisconnected() {
     }
     clients.remove(socket);
     socket->deleteLater();
+}
+
+QString GameServer::getSocketsRoomName(QWebSocket *socket)
+{
+    for (auto it = rooms.begin(); it != rooms.end(); ++it) {
+        if (it.value().first == socket || it.value().second == socket) {
+            it.key();
+            return it.key();
+        }
+    }
+    return "";
+}
+
+void GameServer::restartGame(const QString &roomName)
+{
+    // Здесь нужно реализовать логику очистки ходов для комнаты,
+    // или же переработать структуру, например, добавить поле раундов,
+    // Чтобы ходы в комнате сделанные в разные раунды отличались в хранимой структуре
+
+    // Ну и сброс текстового поле, видимо лучше реализовать в GameWindow
+}
+
+void GameServer::exitGame(const QString &roomName)
+{
+    rooms.remove(roomName);
+    moves.remove(roomName);
+
+    // Затем надо удалить игровое окно для конкретного клиента.
+    // И уведомить оппонента о том, что вы покинули комнату.
+    // Как будто это следует делать в GameWindow
 }

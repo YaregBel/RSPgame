@@ -1,6 +1,8 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
+#include "../../../gameServer/gameServer.h"
+
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -29,6 +31,8 @@ private:
     QPushButton *rockButton;
     QPushButton *paperButton;
     QPushButton *scissorsButton;
+    QPushButton *restartButton;
+    QPushButton *exitButton;
 
     void sendJson(const QJsonObject &json);
 };
