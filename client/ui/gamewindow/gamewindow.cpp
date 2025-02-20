@@ -11,15 +11,23 @@ GameWindow::GameWindow(QWebSocket *socket, const QString &room, QWidget *parent)
     paperButton = new QPushButton("Бумага", this);
     scissorsButton = new QPushButton("Ножницы", this);
 
+    //restartButton = new QPushButton("Переиграть", this);
+    exitButton = new QPushButton("Выйти", this);
+
     layout->addWidget(statusLabel);
     layout->addWidget(rockButton);
     layout->addWidget(paperButton);
     layout->addWidget(scissorsButton);
+    layout->addWidget(exitButton);
 
     connect(rockButton, &QPushButton::clicked, this, &GameWindow::sendChoice);
     connect(paperButton, &QPushButton::clicked, this, &GameWindow::sendChoice);
     connect(scissorsButton, &QPushButton::clicked, this, &GameWindow::sendChoice);
     connect(socket, &QWebSocket::textMessageReceived, this, &GameWindow::onMessageReceived);
+
+    connect(exitButton, &QPushButton::clicked, this, &GameWindow::exitGame);
+    connect(exitButton, &QPushButton::clicked, this, &GameWindow::close);
+
 }
 
 void GameWindow::sendChoice() {
@@ -52,14 +60,15 @@ void GameWindow::onMessageReceived(QString message) {
             statusLabel->setText("Победил player2!");
         }
 
-        //restartButton = new QPushButton("Переиграть", this);
-        exitButton = new QPushButton("Выйти", this);
+        scissorsButton->hide();
+        rockButton->hide();
+        paperButton->hide();
 
+
+        layout->addWidget(restartButton);
         layout->addWidget(exitButton);
 
         //connect(restartButton, &QPushButton::clicked, this, &GameWindow::restartGame);
-        connect(exitButton, &QPushButton::clicked, this, &GameWindow::exitGame);
-        connect(exitButton, &QPushButton::clicked, this, &GameWindow::close);
 
     } else if (type == "opponent_left") {
         statusLabel->setText("Противник покинул игру.");
@@ -70,11 +79,14 @@ void GameWindow::sendJson(const QJsonObject &json) {
     socket->sendTextMessage(QJsonDocument(json).toJson(QJsonDocument::Compact));
 }
 
-void GameWindow::restartGame(const QString &roomName)
+void GameWindow::restartGame()
 {
     // Здесь нужно реализовать логику очистки ходов для комнаты,
     // или же переработать структуру, например, добавить поле раундов,
     // Чтобы ходы в комнате сделанные в разные раунды отличались в хранимой структуре
+
+    // layout->removeWidget(restartButton);
+    // layout->removeWidget(exitButton);
 
     // Ну и сброс текстового поле, видимо лучше реализовать в GameWindow
 }
@@ -83,7 +95,6 @@ void GameWindow::exitGame()
 {
     qDebug("Уведомление GameServer'a о необходимости удаления комнаты.");
     sendJson({{"type", "exit"}});
-
 
     // rooms.remove(roomName);
     // moves.remove(roomName);

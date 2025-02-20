@@ -55,6 +55,15 @@ void GameServer::processMessage(QString message) {
         sendToClient(socket, {{"type", "exit_room"}});
         exitGame(roomName);
     }
+    else if (type == "restart")
+    {
+        QString roomName = obj["room"].toString();
+        qDebug("GameServer получил задание по обновлению комнаты для еще одного раунда.");
+        sendToClient(socket, {{"type", "restart_room"}});
+        restartGame(roomName);
+        // Можно просто удалять комнату и заново создавать и не возиться с записями, но вопрос:
+        // Будет ли это эффективно?
+    }
 }
 
 void GameServer::handleGameMove(QWebSocket *socket, QJsonObject obj) {
@@ -108,6 +117,7 @@ void GameServer::onNewConnection() {
 }
 
 void GameServer::onClientDisconnected() {
+    qDebug("OnClientDisconnected отработал");
     auto socket = qobject_cast<QWebSocket *>(sender());
     for (auto it = rooms.begin(); it != rooms.end();) {
         if (it.value().first == socket || it.value().second == socket) {
@@ -138,6 +148,8 @@ void GameServer::restartGame(const QString &roomName)
     // Здесь нужно реализовать логику очистки ходов для комнаты,
     // или же переработать структуру, например, добавить поле раундов,
     // Чтобы ходы в комнате сделанные в разные раунды отличались в хранимой структуре
+    qDebug("GameServer перезапустил комнату");
+    moves.remove(roomName);
 
     // Ну и сброс текстового поле, видимо лучше реализовать в GameWindow
 }

@@ -1,8 +1,6 @@
 #ifndef GAMEWINDOW_H
 #define GAMEWINDOW_H
 
-#include "../../../gameServer/gameServer.h"
-
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QPushButton>
@@ -24,7 +22,7 @@ private slots:
     void sendChoice();
     void onMessageReceived(QString message);
 
-    void restartGame(const QString &roomName);
+    void restartGame();
     void exitGame();
 
 
