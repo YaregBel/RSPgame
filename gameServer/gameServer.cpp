@@ -48,6 +48,13 @@ void GameServer::processMessage(QString message) {
     } else if (type == "play") {
         handleGameMove(socket, obj);
     }
+    else if (type == "exit")
+    {
+        QString roomName = obj["room"].toString();
+        qDebug("GameServer получил указания по удалению данных о комнате");
+        sendToClient(socket, {{"type", "exit_room"}});
+        exitGame(roomName);
+    }
 }
 
 void GameServer::handleGameMove(QWebSocket *socket, QJsonObject obj) {
@@ -65,8 +72,8 @@ void GameServer::handleGameMove(QWebSocket *socket, QJsonObject obj) {
     if (!moves[roomName].first.isEmpty() && !moves[roomName].second.isEmpty()) {
         QString winner = determineWinner(moves[roomName].first, moves[roomName].second);
         sendToRoom(roomName, {{"type", "game_result"}, {"winner", winner}});
-        rooms.remove(roomName);
-        moves.remove(roomName);
+        // rooms.remove(roomName);
+        // moves.remove(roomName);
     }
 }
 
@@ -137,6 +144,8 @@ void GameServer::restartGame(const QString &roomName)
 
 void GameServer::exitGame(const QString &roomName)
 {
+    qDebug("GameServer приступил к очистке данных о комнате.");
+
     rooms.remove(roomName);
     moves.remove(roomName);
 

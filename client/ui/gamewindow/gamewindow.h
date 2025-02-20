@@ -24,6 +24,10 @@ private slots:
     void sendChoice();
     void onMessageReceived(QString message);
 
+    void restartGame(const QString &roomName);
+    void exitGame();
+
+
 private:
     QWebSocket *socket;
     QString roomName;
@@ -33,6 +37,7 @@ private:
     QPushButton *scissorsButton;
     QPushButton *restartButton;
     QPushButton *exitButton;
+    QVBoxLayout *layout;
 
     void sendJson(const QJsonObject &json);
 };

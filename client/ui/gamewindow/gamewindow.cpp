@@ -4,7 +4,7 @@ GameWindow::GameWindow(QWebSocket *socket, const QString &room, QWidget *parent)
     : QWidget(parent), socket(socket), roomName(room) {
 
     setWindowTitle("Игра: " + room);
-    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout = new QVBoxLayout(this);
 
     statusLabel = new QLabel("Ожидание хода...", this);
     rockButton = new QPushButton("Камень", this);
@@ -52,11 +52,14 @@ void GameWindow::onMessageReceived(QString message) {
             statusLabel->setText("Победил player2!");
         }
 
-        restartButton = new QPushButton("Переиграть", this);
+        //restartButton = new QPushButton("Переиграть", this);
         exitButton = new QPushButton("Выйти", this);
 
-        // connect(restartButton, &QPushButton::clicked, this, &GameServer::restartGame);
-        // connect(exitButton, &QPushButton::clicked, this, &GameServer::exitGame);
+        layout->addWidget(exitButton);
+
+        //connect(restartButton, &QPushButton::clicked, this, &GameWindow::restartGame);
+        connect(exitButton, &QPushButton::clicked, this, &GameWindow::exitGame);
+        connect(exitButton, &QPushButton::clicked, this, &GameWindow::close);
 
     } else if (type == "opponent_left") {
         statusLabel->setText("Противник покинул игру.");
@@ -65,4 +68,27 @@ void GameWindow::onMessageReceived(QString message) {
 
 void GameWindow::sendJson(const QJsonObject &json) {
     socket->sendTextMessage(QJsonDocument(json).toJson(QJsonDocument::Compact));
+}
+
+void GameWindow::restartGame(const QString &roomName)
+{
+    // Здесь нужно реализовать логику очистки ходов для комнаты,
+    // или же переработать структуру, например, добавить поле раундов,
+    // Чтобы ходы в комнате сделанные в разные раунды отличались в хранимой структуре
+
+    // Ну и сброс текстового поле, видимо лучше реализовать в GameWindow
+}
+
+void GameWindow::exitGame()
+{
+    qDebug("Уведомление GameServer'a о необходимости удаления комнаты.");
+    sendJson({{"type", "exit"}});
+
+
+    // rooms.remove(roomName);
+    // moves.remove(roomName);
+
+    // Затем надо удалить игровое окно для конкретного клиента.
+    // И уведомить оппонента о том, что вы покинули комнату.
+    // Как будто это следует делать в GameWindow
 }
