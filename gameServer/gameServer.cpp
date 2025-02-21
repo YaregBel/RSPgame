@@ -12,6 +12,7 @@ GameServer::GameServer(quint16 port, QObject *parent) : QObject(parent),
 }
 
 void GameServer::broadcastMessage(const QJsonObject &message) {
+
     QString data = QJsonDocument(message).toJson(QJsonDocument::Compact);
     for (QWebSocket *client : clients) {
         client->sendTextMessage(data);
@@ -50,9 +51,12 @@ void GameServer::processMessage(QString message) {
     }
     else if (type == "exit")
     {
-        QString roomName = obj["room"].toString();
-        qDebug("GameServer получил указания по удалению данных о комнате");
-        sendToClient(socket, {{"type", "exit_room"}});
+        QString roomName = getSocketsRoomName(socket);
+        qDebug() << "GameServer получил указания по удалению данных о комнате" << roomName;
+        // Возможно будут проблемы, связанные с тем, что type=="exit" будет рассылаться всем
+        // Но на данный момент их не обнаружено
+        broadcastMessage({{{"type", "exit"}, {"room", roomName}}});
+        //sendToClient(socket, {});
         exitGame(roomName);
     }
     else if (type == "restart")

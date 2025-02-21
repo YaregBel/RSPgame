@@ -65,13 +65,14 @@ void GameWindow::onMessageReceived(QString message) {
         paperButton->hide();
 
 
-        layout->addWidget(restartButton);
-        layout->addWidget(exitButton);
+        //layout->addWidget(restartButton);
+        //layout->addWidget(exitButton);
 
         //connect(restartButton, &QPushButton::clicked, this, &GameWindow::restartGame);
 
     } else if (type == "opponent_left") {
         statusLabel->setText("Противник покинул игру.");
+
     }
 }
 

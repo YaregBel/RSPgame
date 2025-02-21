@@ -61,6 +61,18 @@ void MainWindow::onMessageReceived(QString message) {
     else if (type == "error") {
         qDebug() << "Ошибка:" << obj["message"].toString();
     }
+    else if (type == "exit")
+    {
+        qDebug("СТИРАЕМ СТРОКУ В СПИСКЕ");
+        QString roomName = obj["room"].toString();
+        qDebug() << "Название комнаты: " << roomName;
+        for (int i = 0; i < roomList->count(); ++i) {
+            if (roomList->item(i)->text() == roomName) {
+                delete roomList->takeItem(i);
+                break;
+            }
+        }
+    }
 }
 
 void MainWindow::createRoom() {
