@@ -7,3 +7,20 @@ cmake CMakeLists.txt && make
 ```
 Далее потребуется запустить server_app и client_app, которые будут выполнять роль сервера и клиента соответственно. 
 Для игры, необходимо запустить минимум два клиента.
+
+#### Скриншоты работающего интерфейса:
+Рисунок 1 Главное окно клиента
+
+![image](https://github.com/user-attachments/assets/1fa82067-8088-4852-a981-0261a69007e6)
+
+Рисунок 2 Открыто два клиента, один из них создал комнату, после чего был туда перенаправлен
+
+![image](https://github.com/user-attachments/assets/51e16fbd-0e3d-47d8-a815-069caeb1441e)
+
+Рисунок 3 Демонстрация процесса игры
+
+![image](https://github.com/user-attachments/assets/d8903cff-a241-4c70-9517-56957db4112f)
+
+Рисунок 4 Итог игры
+
+![image](https://github.com/user-attachments/assets/b6dc2695-87c4-4fcc-a9a2-5aea33895e9e)
