@@ -9,11 +9,11 @@ Client::Client(QObject *parent) : QObject(parent), socket(new QWebSocket)
     connect(socket, &QWebSocket::disconnected, this, &Client::onDisconnected);
 }
 
-void Client::connectToServer(const QUrl &url)
+void Client::connectToServer(const QUrl &url) const
 {
     if (socket->state() == QAbstractSocket::ConnectedState)
     {
-        qDebug() << "Уже подключен к серверу";
+        qInfo() << "Уже подключен к серверу";
         return;
     }
     socket->open(url);
@@ -21,20 +21,23 @@ void Client::connectToServer(const QUrl &url)
 
 void Client::onConnected()
 {
-    qDebug() << "Подключено к серверу";
+    qInfo() << "Подключено к серверу";
     sendJson({{"type", "get_rooms"}});
 }
 
 void Client::onDisconnected()
 {
-    qDebug() << "Отключено от сервера";
+    qInfo() << "Отключено от сервера";
     emit connectionLost();
 }
 
 void Client::onMessageReceived(QString message)
 {
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
-    if (!doc.isObject()) return;
+    if (!doc.isObject())
+    {
+        return;
+    }
 
     QJsonObject obj = doc.object();
     QString type = obj["type"].toString();
@@ -55,19 +58,37 @@ void Client::onMessageReceived(QString message)
     {
         emit roomRemoved(obj["room"].toString());
     }
+    else if (type == "game_result")
+    {
+        emit gameResultReceived(obj["winner"].toString());
+    }
+    else if (type == "opponent_left")
+    {
+        emit opponentLeft();
+    }
 }
 
-void Client::createRoom(const QString &roomName)
+void Client::createRoom(const QString &roomName) const
 {
     sendJson({{"type", "create_room"}, {"room", roomName}});
 }
 
-void Client::joinRoom(const QString &roomName)
+void Client::joinRoom(const QString &roomName) const
 {
     sendJson({{"type", "join_room"}, {"room", roomName}});
 }
 
-void Client::sendJson(const QJsonObject &json)
+void Client::sendChoice(const QString &choice) const
+{
+    sendJson({{"type", "play"}, {"choice", choice}});
+}
+
+void Client::exitRoom() const
+{
+    sendJson({{"type", "exit"}});
+}
+
+void Client::sendJson(const QJsonObject &json) const
 {
     socket->sendTextMessage(QJsonDocument(json).toJson(QJsonDocument::Compact));
 }

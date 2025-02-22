@@ -62,11 +62,6 @@ private:
      p2 - выбор второго игрока.*/
     QString determineWinner(const QString &p1, const QString &p2);
 
-    QWebSocketServer *server;
-    QSet<QWebSocket *> clients;
-    QMap<QString, QPair<QWebSocket *, QWebSocket *>> rooms;
-    QMap<QString, QPair<QString, QString>> moves;
-
 private slots:
     /*Записываем информацию о подключившемся клиенте,
     перед этим подключив сигналы о получении сообщения
@@ -79,6 +74,13 @@ private slots:
     Далее стираем удаляем ход этого игрока и удаляем комнату.
     После чего удаляем сокет из списка сокетов и удаляем сам объект.*/
     void onClientDisconnected();
+
+private:
+    QWebSocketServer *server;
+    QSet<QWebSocket *> clients;
+    QMap<QString, QPair<QWebSocket *, QWebSocket *>> rooms;
+    QMap<QString, QPair<QString, QString>> moves;
+
 };
 
 #endif // SERVER_H

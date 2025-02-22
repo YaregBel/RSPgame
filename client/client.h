@@ -12,9 +12,11 @@ class Client : public QObject
 public:
     explicit Client(QObject *parent = nullptr);
 
-    void connectToServer(const QUrl &url);
-    void createRoom(const QString &roomName);
-    void joinRoom(const QString &roomName);
+    void connectToServer(const QUrl &url) const;
+    void createRoom(const QString &roomName) const;
+    void joinRoom(const QString &roomName) const;
+    void sendChoice(const QString &choice) const;
+    void exitRoom() const;
 
 signals:
     void roomJoined(const QString &roomName);
@@ -22,16 +24,20 @@ signals:
     void roomRemoved(const QString &roomName);
     void errorReceived(const QString &message);
     void connectionLost();
+    void gameResultReceived(const QString &result);
+    void opponentLeft();
 
 private:
-    QWebSocket *socket;
-
-    void sendJson(const QJsonObject &json);
+    void sendJson(const QJsonObject &json) const;
 
 private slots:
     void onConnected();
     void onMessageReceived(QString message);
     void onDisconnected();
+
+private:
+    QWebSocket *socket;
+
 };
 
 #endif // CLIENT_H

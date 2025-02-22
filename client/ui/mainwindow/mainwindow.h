@@ -21,10 +21,10 @@ public:
 
 private slots:
     void createRoom();
-    void joinRoom();
-    void openGameWindow(const QString &roomName);
-    void addRoom(const QString &roomName);
-    void removeRoom(const QString &roomName);
+    void joinRoom() const;
+    void openGameWindow(const QString &roomName) const;
+    void addRoom(const QString &roomName) const;
+    void removeRoom(const QString &roomName) const;
     void showError(const QString &message);
 
 private:

@@ -35,7 +35,7 @@ void MainWindow::createRoom()
     }
 }
 
-void MainWindow::joinRoom()
+void MainWindow::joinRoom() const
 {
     QListWidgetItem *item = roomList->currentItem();
     if (item)
@@ -44,19 +44,18 @@ void MainWindow::joinRoom()
     }
 }
 
-void MainWindow::openGameWindow(const QString &roomName)
+void MainWindow::openGameWindow(const QString &roomName) const
 {
-    qDebug() << "Открываем игровое окно для комнаты:" << roomName;
-    GameWindow *gameWindow = new GameWindow(nullptr, roomName);
+    GameWindow *gameWindow = new GameWindow(client, roomName);
     gameWindow->show();
 }
 
-void MainWindow::addRoom(const QString &roomName)
+void MainWindow::addRoom(const QString &roomName) const
 {
     roomList->addItem(roomName);
 }
 
-void MainWindow::removeRoom(const QString &roomName)
+void MainWindow::removeRoom(const QString &roomName) const
 {
     for (int i = 0; i < roomList->count(); ++i)
     {
