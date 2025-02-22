@@ -19,6 +19,31 @@ void Client::connectToServer(const QUrl &url) const
     socket->open(url);
 }
 
+void Client::createRoom(const QString &roomName) const
+{
+    sendJson({{"type", "create_room"}, {"room", roomName}});
+}
+
+void Client::joinRoom(const QString &roomName) const
+{
+    sendJson({{"type", "join_room"}, {"room", roomName}});
+}
+
+void Client::sendChoice(const QString &choice) const
+{
+    sendJson({{"type", "play"}, {"choice", choice}});
+}
+
+void Client::exitRoom() const
+{
+    sendJson({{"type", "exit"}});
+}
+
+void Client::sendJson(const QJsonObject &json) const
+{
+    socket->sendTextMessage(QJsonDocument(json).toJson(QJsonDocument::Compact));
+}
+
 void Client::onConnected()
 {
     qInfo() << "Подключено к серверу";
@@ -68,27 +93,3 @@ void Client::onMessageReceived(QString message)
     }
 }
 
-void Client::createRoom(const QString &roomName) const
-{
-    sendJson({{"type", "create_room"}, {"room", roomName}});
-}
-
-void Client::joinRoom(const QString &roomName) const
-{
-    sendJson({{"type", "join_room"}, {"room", roomName}});
-}
-
-void Client::sendChoice(const QString &choice) const
-{
-    sendJson({{"type", "play"}, {"choice", choice}});
-}
-
-void Client::exitRoom() const
-{
-    sendJson({{"type", "exit"}});
-}
-
-void Client::sendJson(const QJsonObject &json) const
-{
-    socket->sendTextMessage(QJsonDocument(json).toJson(QJsonDocument::Compact));
-}

@@ -1,0 +1,8 @@
+/home/yareg/gameApplication/CMakeFiles/client_app.dir
+/home/yareg/gameApplication/CMakeFiles/server_app.dir
+/home/yareg/gameApplication/CMakeFiles/edit_cache.dir
+/home/yareg/gameApplication/CMakeFiles/rebuild_cache.dir
+/home/yareg/gameApplication/CMakeFiles/client_app_autogen_timestamp_deps.dir
+/home/yareg/gameApplication/CMakeFiles/client_app_autogen.dir
+/home/yareg/gameApplication/CMakeFiles/server_app_autogen_timestamp_deps.dir
+/home/yareg/gameApplication/CMakeFiles/server_app_autogen.dir

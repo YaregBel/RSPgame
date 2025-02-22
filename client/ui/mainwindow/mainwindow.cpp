@@ -27,9 +27,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), client(new Client
 
 void MainWindow::createRoom()
 {
-    bool ok;
-    QString roomName = QInputDialog::getText(this, "Создание комнаты", "Введите название комнаты:", QLineEdit::Normal, "", &ok);
-    if (ok && !roomName.isEmpty())
+    bool flag;
+    QString roomName = QInputDialog::getText(this, "Создание комнаты", "Введите название комнаты:", QLineEdit::Normal, "", &flag);
+    if (flag && !roomName.isEmpty())
     {
         client->createRoom(roomName);
     }

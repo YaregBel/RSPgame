@@ -1,6 +1,6 @@
 #include "gameServer.h"
 
-GameServer::GameServer(quint16 port, QObject *parent) : QObject(parent),
+GameServer::GameServer(const quint16 port, QObject *parent) : QObject(parent),
     server(new QWebSocketServer("RockPaperServer", QWebSocketServer::NonSecureMode, this))
 {
 
@@ -24,7 +24,7 @@ void GameServer::broadcastMessage(const QJsonObject &message)
     }
 }
 
-void GameServer::processMessage(QString message)
+void GameServer::processMessage(const QString& message)
 {
     auto socket = qobject_cast<QWebSocket *>(sender());
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
@@ -89,7 +89,7 @@ void GameServer::processMessage(QString message)
     }
 }
 
-void GameServer::handleGameMove(QWebSocket *socket, QJsonObject obj)
+void GameServer::handleGameMove(const QWebSocket *socket, const QJsonObject& obj)
 {
     QString choice = obj["choice"].toString();
     QString roomName = getSocketsRoomName(socket);
@@ -132,12 +132,12 @@ QString GameServer::determineWinner(const QString &p1, const QString &p2)
     return "player2";
 }
 
-void GameServer::sendToClient(QWebSocket *socket, QJsonObject message)
+void GameServer::sendToClient(QWebSocket *socket, const QJsonObject& message)
 {
     socket->sendTextMessage(QJsonDocument(message).toJson(QJsonDocument::Compact));
 }
 
-void GameServer::sendToRoom(const QString &roomName, QJsonObject message)
+void GameServer::sendToRoom(const QString &roomName, const QJsonObject& message)
 {
     auto room = rooms[roomName];
     if (room.first)
@@ -161,7 +161,7 @@ void GameServer::onNewConnection()
 
 void GameServer::onClientDisconnected()
 {
-    qDebug("OnClientDisconnected отработал");
+    qInfo("OnClientDisconnected отработал");
     auto socket = qobject_cast<QWebSocket *>(sender());
     for (auto it = rooms.begin(); it != rooms.end();)
     {
@@ -180,7 +180,7 @@ void GameServer::onClientDisconnected()
     socket->deleteLater();
 }
 
-QString GameServer::getSocketsRoomName(QWebSocket *socket)
+QString GameServer::getSocketsRoomName(const QWebSocket *socket)
 {
     for (auto it = rooms.begin(); it != rooms.end(); ++it)
     {
