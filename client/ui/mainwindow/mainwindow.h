@@ -1,16 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "../../client.h"
 #include "../gamewindow/gamewindow.h"
 
 #include <QMainWindow>
-#include <QWebSocket>
 #include <QListWidget>
 #include <QPushButton>
 #include <QVBoxLayout>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QInputDialog>
+#include <QMessageBox>
 #include <QDebug>
 
 class MainWindow : public QMainWindow {
@@ -18,23 +17,21 @@ class MainWindow : public QMainWindow {
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    ~MainWindow(){};
 
 private slots:
-    void connectToServer();
-    void onConnected();
-    void onMessageReceived(QString message);
     void createRoom();
     void joinRoom();
+    void openGameWindow(const QString &roomName);
+    void addRoom(const QString &roomName);
+    void removeRoom(const QString &roomName);
+    void showError(const QString &message);
 
 private:
-    QWebSocket *socket;
+    Client *client;
     QListWidget *roomList;
     QPushButton *createRoomButton;
     QPushButton *joinRoomButton;
-    QString selectedRoom;
-
-    void sendJson(const QJsonObject &json);
 };
 
 #endif // MAINWINDOW_H

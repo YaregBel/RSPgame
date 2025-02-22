@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), socket(new QWebSocket) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), client(new Client(this))
+{
     QWidget *centralWidget = new QWidget(this);
     QVBoxLayout *layout = new QVBoxLayout(centralWidget);
 
@@ -15,82 +16,59 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), socket(new QWebSo
 
     connect(createRoomButton, &QPushButton::clicked, this, &MainWindow::createRoom);
     connect(joinRoomButton, &QPushButton::clicked, this, &MainWindow::joinRoom);
-    connect(socket, &QWebSocket::connected, this, &MainWindow::onConnected);
-    connect(socket, &QWebSocket::textMessageReceived, this, &MainWindow::onMessageReceived);
 
-    connectToServer();
+    connect(client, &Client::roomJoined, this, &MainWindow::openGameWindow);
+    connect(client, &Client::newRoomAvailable, this, &MainWindow::addRoom);
+    connect(client, &Client::roomRemoved, this, &MainWindow::removeRoom);
+    connect(client, &Client::errorReceived, this, &MainWindow::showError);
+
+    client->connectToServer(QUrl("ws://localhost:24563"));
 }
 
-MainWindow::~MainWindow() {
-    socket->close();
-    delete socket;
-}
-
-void MainWindow::connectToServer() {
-    socket->open(QUrl("ws://localhost:24563"));
-}
-
-void MainWindow::onConnected() {
-    qDebug() << "Подключено к серверу";
-    sendJson({{"type", "get_rooms"}});
-}
-
-void MainWindow::onMessageReceived(QString message) {
-    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
-    if (!doc.isObject()) return;
-
-    QJsonObject obj = doc.object();
-    QString type = obj["type"].toString();
-
-    if (type == "room_created") {
-        qDebug() << "Комната создана:" << obj["room"].toString();
-        selectedRoom = obj["room"].toString();  // Сохраняем название комнаты
-        GameWindow* gameWindow = new GameWindow(socket, selectedRoom);
-        gameWindow->show();
-    }
-    else if (type == "game_start") {
-        qDebug() << "Перешел в созданную комнату:" << obj["room"].toString();
-        qDebug() << "Игра началась!";
-        GameWindow* gameWindow = new GameWindow(socket, selectedRoom);
-        gameWindow->show();
-    }
-    else if (type == "new_room") {
-        QString roomName = obj["room"].toString();
-        roomList->addItem(roomName);  // Добавляем комнату в список
-    }
-    else if (type == "error") {
-        qDebug() << "Ошибка:" << obj["message"].toString();
-    }
-    else if (type == "exit")
+void MainWindow::createRoom()
+{
+    bool ok;
+    QString roomName = QInputDialog::getText(this, "Создание комнаты", "Введите название комнаты:", QLineEdit::Normal, "", &ok);
+    if (ok && !roomName.isEmpty())
     {
-        qDebug("СТИРАЕМ СТРОКУ В СПИСКЕ");
-        QString roomName = obj["room"].toString();
-        qDebug() << "Название комнаты: " << roomName;
-        for (int i = 0; i < roomList->count(); ++i) {
-            if (roomList->item(i)->text() == roomName) {
-                delete roomList->takeItem(i);
-                break;
-            }
+        client->createRoom(roomName);
+    }
+}
+
+void MainWindow::joinRoom()
+{
+    QListWidgetItem *item = roomList->currentItem();
+    if (item)
+    {
+        client->joinRoom(item->text());
+    }
+}
+
+void MainWindow::openGameWindow(const QString &roomName)
+{
+    qDebug() << "Открываем игровое окно для комнаты:" << roomName;
+    GameWindow *gameWindow = new GameWindow(nullptr, roomName);
+    gameWindow->show();
+}
+
+void MainWindow::addRoom(const QString &roomName)
+{
+    roomList->addItem(roomName);
+}
+
+void MainWindow::removeRoom(const QString &roomName)
+{
+    for (int i = 0; i < roomList->count(); ++i)
+    {
+        if (roomList->item(i)->text() == roomName)
+        {
+            delete roomList->takeItem(i);
+            break;
         }
     }
 }
 
-void MainWindow::createRoom() {
-    bool ok;
-    QString roomName = QInputDialog::getText(this, "Создание комнаты", "Введите название комнаты:", QLineEdit::Normal, "", &ok);
-    if (ok && !roomName.isEmpty()) {
-        sendJson({{"type", "create_room"}, {"room", roomName}});
-    }
-}
-
-void MainWindow::joinRoom() {
-    QListWidgetItem *item = roomList->currentItem();
-    if (item) {
-        selectedRoom = item->text();
-        sendJson({{"type", "join_room"}, {"room", selectedRoom}});
-    }
-}
-
-void MainWindow::sendJson(const QJsonObject &json) {
-    socket->sendTextMessage(QJsonDocument(json).toJson(QJsonDocument::Compact));
+void MainWindow::showError(const QString &message)
+{
+    QMessageBox::warning(this, "Ошибка", message);
 }

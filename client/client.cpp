@@ -1,55 +1,73 @@
 #include "client.h"
+#include <QJsonDocument>
+#include <QJsonObject>
 
-Client::Client(QObject *parent) : QObject(parent), socket(new QTcpSocket(this))
+Client::Client(QObject *parent) : QObject(parent), socket(new QWebSocket)
 {
-    connect(socket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
-    connect(socket, &QTcpSocket::disconnected, this, &Client::onDisconnected);
+    connect(socket, &QWebSocket::connected, this, &Client::onConnected);
+    connect(socket, &QWebSocket::textMessageReceived, this, &Client::onMessageReceived);
+    connect(socket, &QWebSocket::disconnected, this, &Client::onDisconnected);
 }
 
-void Client::connectToServer(const QString &host, quint16 port)
+void Client::connectToServer(const QUrl &url)
 {
-    // Проверяем текущее состояние подключения
     if (socket->state() == QAbstractSocket::ConnectedState)
     {
         qDebug() << "Уже подключен к серверу";
         return;
     }
+    socket->open(url);
+}
 
-    socket->connectToHost(host, port);
-
-    if (!socket->waitForConnected(24563))
-    {
-        qDebug() << "Не удалось подключиться:" << socket->errorString();
-    }
-    else
-    {
-        qDebug() << "Успешное подключение к серверу";
-        m_isInRoom = true; // Устанавливаем флаг в комнате
-    }
+void Client::onConnected()
+{
+    qDebug() << "Подключено к серверу";
+    sendJson({{"type", "get_rooms"}});
 }
 
 void Client::onDisconnected()
 {
-    qDebug() << "Отключен от сервера";
-    m_isInRoom = false; // Сбрасываем флаг при отключении
+    qDebug() << "Отключено от сервера";
     emit connectionLost();
 }
 
-void Client::sendChoice(const QString &choice)
+void Client::onMessageReceived(QString message)
 {
-    // Отправляем только если подключены и находимся в комнате
-    if (socket->state() == QAbstractSocket::ConnectedState && m_isInRoom)
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
+    if (!doc.isObject()) return;
+
+    QJsonObject obj = doc.object();
+    QString type = obj["type"].toString();
+
+    if (type == "room_created" || type == "game_start")
     {
-        socket->write(choice.toUtf8());
+        emit roomJoined(obj["room"].toString());
+    }
+    else if (type == "new_room")
+    {
+        emit newRoomAvailable(obj["room"].toString());
+    }
+    else if (type == "error")
+    {
+        emit errorReceived(obj["message"].toString());
+    }
+    else if (type == "exit")
+    {
+        emit roomRemoved(obj["room"].toString());
     }
 }
 
-// Остальные методы без изменений
-void Client::onReadyRead()
+void Client::createRoom(const QString &roomName)
 {
-    QByteArray data = socket->readAll();
-    QString result = QString::fromUtf8(data).trimmed();
-    qDebug() << "Результат игры:" << result;
-    emit gameResultReceived(result);
+    sendJson({{"type", "create_room"}, {"room", roomName}});
 }
 
+void Client::joinRoom(const QString &roomName)
+{
+    sendJson({{"type", "join_room"}, {"room", roomName}});
+}
+
+void Client::sendJson(const QJsonObject &json)
+{
+    socket->sendTextMessage(QJsonDocument(json).toJson(QJsonDocument::Compact));
+}

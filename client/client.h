@@ -2,11 +2,9 @@
 #define CLIENT_H
 
 #include <QObject>
-#include <QTcpSocket>
 #include <QWebSocket>
 #include <QJsonDocument>
 #include <QJsonObject>
-
 
 class Client : public QObject
 {
@@ -14,25 +12,26 @@ class Client : public QObject
 public:
     explicit Client(QObject *parent = nullptr);
 
-    void connectToServer(const QString &host, quint16 port);
-    void sendChoice(const QString &choice);
-
-private:
-    QTcpSocket *socket;
-    bool m_isInRoom = false;
-
+    void connectToServer(const QUrl &url);
+    void createRoom(const QString &roomName);
+    void joinRoom(const QString &roomName);
 
 signals:
-    void gameResultReceived(const QString &result);
-    void sendRoomList(QWebSocket *socket);
+    void roomJoined(const QString &roomName);
+    void newRoomAvailable(const QString &roomName);
+    void roomRemoved(const QString &roomName);
+    void errorReceived(const QString &message);
     void connectionLost();
 
+private:
+    QWebSocket *socket;
+
+    void sendJson(const QJsonObject &json);
 
 private slots:
-    void onReadyRead();
+    void onConnected();
+    void onMessageReceived(QString message);
     void onDisconnected();
-
-
 };
 
 #endif // CLIENT_H

@@ -1,4 +1,5 @@
 #include "ui/mainwindow/mainwindow.h"
+#include "client.h"
 
 #include <QApplication>
 
