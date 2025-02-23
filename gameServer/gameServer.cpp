@@ -56,7 +56,6 @@ void GameServer::processMessage(const QString& message)
         if (rooms.contains(roomName) && rooms[roomName].second == nullptr)
         {
             rooms[roomName].second = socket;
-            //sendToRoom(roomName, {{"type", "game_start"}});
             sendToClient(socket, {{"type", "game_start"}});
         }
         else
@@ -72,10 +71,7 @@ void GameServer::processMessage(const QString& message)
     {
         QString roomName = getSocketsRoomName(socket);
         qDebug() << "GameServer получил указания по удалению данных о комнате" << roomName;
-        // Возможно будут проблемы, связанные с тем, что type=="exit" будет рассылаться всем
-        // Но на данный момент их не обнаружено
         broadcastMessage({{{"type", "exit"}, {"room", roomName}}});
-        //sendToClient(socket, {});
         exitGame(roomName);
     }
     else if (type == "restart")
@@ -84,8 +80,6 @@ void GameServer::processMessage(const QString& message)
         qInfo("GameServer получил задание по обновлению комнаты для еще одного раунда.");
         sendToClient(socket, {{"type", "restart_room"}});
         restartGame(roomName);
-        // Можно просто удалять комнату и заново создавать и не возиться с записями, но вопрос:
-        // Будет ли это эффективно?
     }
 }
 
@@ -195,13 +189,8 @@ QString GameServer::getSocketsRoomName(const QWebSocket *socket)
 
 void GameServer::restartGame(const QString &roomName)
 {
-    // Здесь нужно реализовать логику очистки ходов для комнаты,
-    // или же переработать структуру, например, добавить поле раундов,
-    // Чтобы ходы в комнате сделанные в разные раунды отличались в хранимой структуре
     qInfo("GameServer перезапустил комнату");
     moves.remove(roomName);
-
-    // Ну и сброс текстового поле, видимо лучше реализовать в GameWindow
 }
 
 void GameServer::exitGame(const QString &roomName)
@@ -210,8 +199,4 @@ void GameServer::exitGame(const QString &roomName)
 
     rooms.remove(roomName);
     moves.remove(roomName);
-
-    // Затем надо удалить игровое окно для конкретного клиента.
-    // И уведомить оппонента о том, что вы покинули комнату.
-    // Как будто это следует делать в GameWindow
 }
